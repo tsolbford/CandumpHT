@@ -1,9 +1,19 @@
 using System;
 using System.IO;
+using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CandumpHT
 {
+    struct PositionValue
+    {
+        public Int32 value;
+        public Int32 position;
+    }
+
+    static private Dictionary<PositionValue, Color> mHighlights = new Dictionary<PositionValue, Color>();
+
     static private String modify(String line)
     {
         String modified = String.Empty;
@@ -12,19 +22,23 @@ public class CandumpHT
         Int32 ndx = 0;
         foreach(var part in parts)
         {
-            switch(ndx)
+            PositionValue pv;
+            pv.value = -1;
+            pv.position = ndx;
+            try {
+                pv.value = Int32.Parse(part);
+            } catch(Exception e){}
+
+            if(mHighlights.ContainsKey(pv))
             {
-/*
-                case 2:
-                    modified += "<mark style=\"background-color: blue\">";
-                    modified += part;
-                    modified += "</mark>";
-                    break;
-*/
-                default:
-                    modified += part;
-                    modified += " ";
-                    break;
+                modified += "<mark style=\"background-color: " + mHighlights[pv].Name +"\">";
+                modified += part;
+                modified += "</mark>";
+            }
+            else
+            {
+                modified += part;
+                modified += " ";
             }
 
             ndx++;
@@ -64,6 +78,16 @@ public class CandumpHT
             {
                 log.Remove(filter);
             }
+        }
+
+        foreach(String highlight in highlights)
+        {
+            var config = highlight.Split(' ');
+
+            PositionValue pv;
+            pv.position = Int32.Parse(config[0]);
+            pv.value = Int32.Parse(config[1]);
+            mHighlights.Add(pv, Color.FromName(config[2]));
         }
 
         ArrayList modified = new ArrayList();

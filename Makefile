@@ -1,5 +1,5 @@
 CandumpHT: Main.cs
-	mcs $< -out:$@
+	mcs $< -out:$@ -r System.Drawing
 
 clean:
 	-@rm CandumpHT
