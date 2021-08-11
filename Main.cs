@@ -27,7 +27,10 @@ public class CandumpHT
             pv.position = ndx;
             try {
                 pv.value = Int32.Parse(part);
-            } catch(Exception e){}
+            } catch(Exception e)
+            {
+                e.ToString();
+            }
 
             if(mHighlights.ContainsKey(pv))
             {
