@@ -70,6 +70,14 @@ public class CandumpHT
             }
         }
 
+        foreach(String filter in filters)
+        {
+            while(log.Contains(filter))
+            {
+                log.Remove(filter);
+            }
+        }
+
         foreach(String highlight in highlights)
         {
             if(highlight.StartsWith("@"))
@@ -91,14 +99,6 @@ public class CandumpHT
             pv.position = Int32.Parse(config[0]);
             pv.value = config[1];
             mHighlights.Add(pv, Color.FromName(config[2]));
-        }
-
-        foreach(String filter in filters)
-        {
-            while(log.Contains(filter))
-            {
-                log.Remove(filter);
-            }
         }
 
         // Start file output
