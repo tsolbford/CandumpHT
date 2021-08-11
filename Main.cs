@@ -51,7 +51,7 @@ public class CandumpHT
         if(Args.Length < 1)
         {
             Console.WriteLine("Usage: <candump>");
-            Console.WriteLine("Options:          <filters> <highlights>");
+            Console.WriteLine("Options:          <highlights> <filters>");
             return;
         }
 
