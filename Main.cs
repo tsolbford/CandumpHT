@@ -26,12 +26,11 @@ public class CandumpHT
             PositionValue pv;
             pv.value = part;
             pv.position = ndx;
-
             if(mHighlights.ContainsKey(pv))
             {
                 modified += "<mark style=\"background-color: " + mHighlights[pv].Name +"\">";
                 modified += part;
-                modified += "</mark>";
+                modified += "</mark>&nbsp;";
             }
             else
             {
