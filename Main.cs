@@ -8,10 +8,11 @@ public class CandumpHT
 {
     struct PositionValue
     {
-        public Int32 value;
+        public String value;
         public Int32 position;
     }
 
+    static private Dictionary<String, Color> mKeys = new Dictionary<String, Color>();
     static private Dictionary<PositionValue, Color> mHighlights = new Dictionary<PositionValue, Color>();
 
     static private String modify(String line)
@@ -23,14 +24,8 @@ public class CandumpHT
         foreach(var part in parts)
         {
             PositionValue pv;
-            pv.value = -1;
+            pv.value = part;
             pv.position = ndx;
-            try {
-                pv.value = Int32.Parse(part);
-            } catch(Exception e)
-            {
-                e.ToString();
-            }
 
             if(mHighlights.ContainsKey(pv))
             {
@@ -68,11 +63,34 @@ public class CandumpHT
         var highlights = new String[0];
         if(Args.Length > 1)
         {
-            filters = File.ReadAllLines(Args[1]);
+            highlights = File.ReadAllLines(Args[1]);
             if(Args.Length > 2)
             {
-                highlights = File.ReadAllLines(Args[2]);
+                filters = File.ReadAllLines(Args[2]);
             }
+        }
+
+        foreach(String highlight in highlights)
+        {
+            if(highlight.StartsWith("@"))
+            {
+                // Comment
+                continue;
+            }
+
+            if(highlight.StartsWith("#"))
+            {
+                var key = highlight.Split(' ');
+                mKeys.Add(key[1], Color.FromName(key[2]));
+                continue;
+            }
+
+            var config = highlight.Split(' ');
+
+            PositionValue pv;
+            pv.position = Int32.Parse(config[0]);
+            pv.value = config[1];
+            mHighlights.Add(pv, Color.FromName(config[2]));
         }
 
         foreach(String filter in filters)
@@ -83,26 +101,24 @@ public class CandumpHT
             }
         }
 
-        foreach(String highlight in highlights)
-        {
-            var config = highlight.Split(' ');
+        // Start file output
+        const String file = "output.html";
+        File.WriteAllText(file, "<html>\n");
 
-            PositionValue pv;
-            pv.position = Int32.Parse(config[0]);
-            pv.value = Int32.Parse(config[1]);
-            mHighlights.Add(pv, Color.FromName(config[2]));
+        foreach(var key in mKeys)
+        {
+            File.AppendAllText(file, key.Key);
+            File.AppendAllText(file, "<mark style=\"background-color: " + key.Value.Name +"\">_</mark>&nbsp;");
         }
+
+        File.AppendAllText(file, "<br><br>");
 
         ArrayList modified = new ArrayList();
         foreach(String line in log)
         {
-            
             modified.Add(modify(line));
         }
 
-        const String file = "output.html";
-
-        File.WriteAllText(file, "<html>\n");
         File.AppendAllLines(file, (String[])modified.ToArray(typeof(String)));
         File.AppendAllText(file, "</html>");
 
